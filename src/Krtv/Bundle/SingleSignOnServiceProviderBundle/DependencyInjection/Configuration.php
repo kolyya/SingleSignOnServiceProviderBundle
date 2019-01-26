@@ -18,9 +18,16 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $builder = new TreeBuilder();
+        if (\method_exists(TreeBuilder::class, 'getRootNode')) {
+            $treeBuilder = new TreeBuilder('krtv_single_sign_on_service_provider');
+            $rootNode = $treeBuilder->getRootNode();
+        } else {
+            // BC layer for symfony/config 4.1 and older
+            $treeBuilder = new TreeBuilder();
+            $rootNode = $treeBuilder->root('krtv_single_sign_on_service_provider');
+        }
 
-        $builder->root('krtv_single_sign_on_service_provider')
+        $rootNode
             ->children()
                 ->scalarNode('host')
                     ->isRequired()
